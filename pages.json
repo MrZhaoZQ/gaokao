@@ -1,0 +1,81 @@
+{
+	"pages": [
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/user/qrcode",
+			"style": {
+				"navigationBarTitleText": "专属二维码"
+			}
+		},
+		{
+			"path": "pages/user/record/promos",
+			"style": {
+				"navigationBarTitleText": "推广记录",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/user/record/reward",
+			"style": {
+				"navigationBarTitleText": "奖励记录",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/user/record/withdraw",
+			"style": {
+				"navigationBarTitleText": "我的提现"
+			}
+		},
+		{
+			"path": "pages/user/withdraw",
+			"style": {
+				"navigationBarTitleText": "提现"
+			}
+		},
+		{
+			"path": "pages/user/report",
+			"style": {
+				"navigationBarTitleText": "我的报告",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/user/record/payment",
+			"style": {
+				"navigationBarTitleText": "支付记录",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/user/privacy",
+			"style": {
+				"navigationBarTitleText": "隐私保护指引"
+			}
+		},
+		{
+			"path": "pages/user/protocol",
+			"style": {
+				"navigationBarTitleText": "会员服务协议"
+			}
+		},
+		{
+			"path": "pages/user/version",
+			"style": {
+				"navigationBarTitleText": "版本信息"
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	},
+	"uniIdRouter": {}
+}
