@@ -34,26 +34,29 @@
 		<!-- 主要内容 -->
 		<view v-else class="main">
 			<view class="list">
-				<view class="user">我是高三理科学生，模拟考试能考580分，选考历史化学，我能考上哪个学校</view>
-				<view class="ai">
-					<image class="avatar" src="/static/imgs/ai_avatar.png" mode="widthFix"></image>
-					<view v-if="thinking" class="thinking"></view>
-					<view v-else class="result">
-						<view class="context">
-							<!-- <rich-text :nodes="context"></rich-text> -->
-						</view>
-						<view class="create-pdf" @click="createPDF">
-							<image class="pdf" src="/static/imgs/pdf_ico.png" mode="widthFix"></image>
-							<text>生成PDF</text>
-						</view>
-						<view class="notice">
-							<view class="uicon">
-								<uni-icons type="info" size="32rpx" color="#e27b26"></uni-icons>
+				<view v-for="(item, index) in list" :key="index">
+					<view v-if="item.type === 1" class="user">{{item.context}}</view>
+					<view v-else class="ai">
+						<image class="avatar" src="/static/imgs/ai_avatar.png" mode="widthFix"></image>
+						<view class="result">
+							<view class="context" v-if="item.context">
+								<rich-text :nodes="item.context"></rich-text>
 							</view>
-							<text class="txt">本回答由 AI 生成，内容仅供参考，请仔细甄别。</text>
+							<view v-if="item.output" class="thinking"></view>
+							<view v-else class="create-pdf" @click="createPDF">
+								<image class="pdf" src="/static/imgs/pdf_ico.png" mode="widthFix"></image>
+								<text>生成PDF</text>
+							</view>
+							<view class="notice">
+								<view class="uicon">
+									<uni-icons type="info" size="32rpx" color="#e27b26"></uni-icons>
+								</view>
+								<text class="txt">本回答由 AI 生成，内容仅供参考，请仔细甄别。</text>
+							</view>
 						</view>
 					</view>
 				</view>
+				<view class="scrollTo"></view>
 			</view>
 		</view>
 		
@@ -136,13 +139,20 @@
 		{ 'ico': '../../static/imgs/feat3.png', 'txt': '一键生成', 'sub': '一键生成PDF报告' }
 	]);
 	const checked = ref(false);
-	// 获取用户信息
+	// 获取用户信息（发送消息的参数）
+	let userInfo = {};
 	const getUserInfoFn = () => {
 		getUserInfo().then(res => {
 			uni.hideLoading();
-			// 根据返回数据展示对应内容，如用户是否已付费等
+			userInfo = {
+				openid: res?.openid || '',
+				id: res?.id || ''
+			};
+			// 根据返回数据展示对应内容，如用户是否已付费可直接使用
 			if (res?.allowSend === 1) {
 				sendable.value = true;
+				// 连接 WebSocket
+				connectWebSocket();
 			} else {
 				sendable.value = false;
 			}
@@ -209,16 +219,10 @@
 			page: 1,
 			pageSize: 10
 		}).then(res => {
-			// membPackage.value = res?.records?.length ? res.records[0] : {
-			// 	id: 1,
-			// 	discountPrice: 29.99,
-			// 	marketPrice: 60,
-			// 	tips: '优惠24小时后失效'
-			// };
-			membPackage.value = {
-				id: res?.records?.length ? res.records[0].id : 1,
+			membPackage.value = res?.records?.length ? res.records[0] : {
+				id: 1,
 				discountPrice: 29.99,
-				marketPrice: 60,
+				marketPrice: 30,
 				tips: '优惠24小时后失效'
 			};
 			purchasePopup.value.open();
@@ -255,7 +259,6 @@
 		}).then(order => {
 			// 获取支付参数
 			getPaymtData({id: order.id}).then(res => {
-				uni.hideLoading();
 				// 拉起支付
 				uni.requestPayment({
 					provider: 'wxpay',
@@ -268,8 +271,11 @@
 						// 支付成功后
 						purchasePopup.value.close();
 						sendable.value = true;
+						// 更新用户信息
+						getUserInfoFn();
 					},
 					fail: ({errMsg}) => {
+						uni.hideLoading();
 						// console.log(errMsg)
 						if (errMsg && errMsg.indexOf('cancel') < 0) {
 							uni.showToast({
@@ -298,14 +304,20 @@
 		});
 	};
 	// WebSocket
-	const wsConnected = false; // 是否已连接
+	let wsTask = null; // socketTask 对象
+	let wsConnected = false; // 是否已连接
 	let reconnectCount = 0; // 重连次数
 	const maxReconnectCount = 3; // 最大重连次数
 	const reconnectInterval = 3000; // 重连间隔时间（毫秒）
+	const list = ref([]); // 用户与AI的消息列表
+	let current = 0; // 当前正在接收的AI消息在消息列表的索引
+	let tempMsg = ''; // 用于临时存储 AI 返回的数据流
 	// 连接 WebSocket
 	const connectWebSocket = () => {
-	    uni.connectSocket({
-			url: 'wss://your-websocket-url', // WebSocket 地址
+		// uni-app的socket，分全局socket和socketTask。全局socket只能有一个，一旦被占用就无法再开启。一般使用socketTask。
+		// SocketTask 由 uni.connectSocket() 接口创建。
+		wsTask = uni.connectSocket({
+			url: 'ws://123.207.184.169:8888/ws', // WebSocket 地址
 			success: () => {
 				console.log('WebSocket 连接中...');
 			},
@@ -313,25 +325,38 @@
 				console.error('WebSocket 连接失败', err);
 				reconnect();
 			}
-	    });
-	    // 监听 WebSocket 打开事件
-	    uni.onSocketOpen(() => {
+		});
+		// 监听 WebSocket 打开事件
+		wsTask.onOpen(() => {
 			console.log('WebSocket 连接成功');
 			wsConnected = true;
 			reconnectCount = 0;
-	    });
-	    // 监听 WebSocket 消息事件
-		uni.onSocketMessage((res) => {
+		});
+		// 监听 WebSocket 消息事件
+		wsTask.onMessage((res) => {
 			const message = res.data;
-			console.log('收到消息: ', message);
+			// console.log('收到消息: ', message);
+			const arr = list.value;
+			if (message == "<message>") { // 开头
+				tempMsg = "";
+			} else if (message == '</message>') {// 结尾
+				arr[current].output = false;
+				thinking.value = false;
+			} else {
+				tempMsg += message;
+				arr[current].context = tempMsg;
+				uni.pageScrollTo({
+					selector: '.scrollTo'
+				});
+			}
 		});
 		// 监听 WebSocket 错误事件
-		uni.onSocketError((err) => {
+		wsTask.onError((err) => {
 			console.error('WebSocket 错误', err);
 			reconnect();
 		});
 		// 监听 WebSocket 关闭事件
-		uni.onSocketClose(() => {
+		wsTask.onClose(() => {
 			console.log('WebSocket 连接关闭');
 			wsConnected = false;
 			// 判断是否需要重连
@@ -340,7 +365,7 @@
 	};
 	// 关闭 WebSocket
 	const closeWebSocket = () => {
-		uni.closeSocket();
+		wsTask.close();
 	};
 	// 重连机制
 	const reconnect = () => {
@@ -356,34 +381,36 @@
 	};
 	// 发送消息
 	const sendFn = () => {
-		if (thinking.value) return;
-		
-		msg.value = '';
-		sent.value = true;
-		thinking.value = true;
-		setTimeout(() => {
-			thinking.value = false;
-		}, 3000);
-		
-	// 	if (!wsConnected) {
-	// 		console.error('WebSocket 未连接');
-	// 		return;
-	// 	}
-	
-	// 	if (!msg.value) {
-	// 		console.error('消息不能为空');
-	// 		return;
-	// 	}
-	
-	// 	uni.sendSocketMessage({
-	// 		data: msg.value,
-	// 		success: () => {
-	// 			console.log('消息发送成功:', msg.value);
-	// 		},
-	// 		fail: (err) => {
-	// 			console.error('消息发送失败', err);
-	// 		}
-	// 	});
+		if (thinking.value) return; // AI 思考中...
+		if (!wsConnected) return; // WebSocket 未连接
+		if (!msg.value) return; // 消息不能为空
+		wsTask.send({
+			data: JSON.stringify({
+				type: "user",
+				token: userInfo.openid,
+				uid: userInfo.id,
+				content: msg.value
+			}),
+			success: () => {
+				console.log('消息发送成功:', msg.value);
+				list.value.push({
+					type: 1,
+					context: msg.value
+				});
+				list.value.push({
+					type: 2,
+					output: true,
+					context: ''
+				});
+				current = list.value.length - 1;
+				msg.value = '';
+				sent.value = true;
+				thinking.value = true;
+			},
+			fail: (err) => {
+				console.error('消息发送失败', err);
+			}
+		});
 	};
 	// 点击“生成PDF”
 	const createPDF = () => {
@@ -392,7 +419,7 @@
 	// 监听页面加载
 	onLoad((options) => {
 		// console.log('onLoad: ', options);
-		// connectWebSocket();
+		
 	});
 	// 监听页面初次渲染完成，此时组件已挂载完成，DOM 树($el)已可用
 	onReady(() => {
@@ -544,9 +571,9 @@
 		width: 100%;
 		min-height: 786rpx;
 		padding-top: 46rpx;
-		border-radius: 30rpx 30rpx 0 0;
-		// background: url('../../static/imgs/popup_bg.png') no-repeat;
-		// background-size: 100% 100%;
+		border-radius: 46rpx 46rpx 0 0;
+		background: url('https://health.image.jmd-mall.com/gxb/imgs/popup_bg.png') no-repeat;
+		background-size: 100% 100%;
 		background-color: #ffffff;
 		.subtitle {
 			width: 100%;
@@ -693,7 +720,8 @@
 	// AI thinking animation
 	.thinking {
 		width: 40rpx;
-		margin: 10rpx 0;
+		// margin: 10rpx 0;
+		margin: 10rpx 0 10rpx 272rpx;
 		aspect-ratio: 1;
 		border-radius: 50%;
 		background: 
@@ -704,5 +732,10 @@
 	}
 	@keyframes l13 { 
 		100% {transform: rotate(1turn)}
+	}
+	
+	// for AI result
+	::v-deep .ai-title {
+		font-weight: bolder;
 	}
 </style>

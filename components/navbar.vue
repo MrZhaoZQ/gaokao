@@ -45,6 +45,7 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+		background-color: #ffffff;
 	}
 	.title {
 		font-size: 32rpx;

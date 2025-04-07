@@ -1,7 +1,7 @@
 <template>
 	<view class="container">
 		<view class="main">
-			<image class="bg" src="../../static/imgs/promo.jpg" mode="widthFix"></image>
+			<image class="bg" src="https://health.image.jmd-mall.com/gxb/imgs/promo.jpg" mode="widthFix"></image>
 			<view class="generate" @click="generateFn"></view>
 		</view>
 		<!-- 微信小程序基础库2.9.0起支持一套新Canvas 2D接口（需指定type属性），同时支持同层渲染 -->
@@ -10,25 +10,16 @@
 </template>
 
 <script setup>
-	import {
-		ref
-	} from 'vue';
-	import {
-		onLoad,
-		onShow
-	} from '@dcloudio/uni-app';
-	import {
-		wxLogin,
-		getUserInfo
-	} from '@/api/user.js';
+	import { ref } from 'vue';
+	import { onLoad, onShow } from '@dcloudio/uni-app';
+	import { wxLogin, getUserInfo } from '@/api/user.js';
 	// 生成的图片路径
-	// let createdImg = '';
 	const createdImg = ref('')
 	// 分享图片的数据
 	const shareInfo = {
 		title: 'AI雷达志愿',
 		mpQrCode: '',
-		bgImg: 'https://health.image.jmd-mall.com/dxb/images/share.png',
+		bgImg: 'https://health.image.jmd-mall.com/gxb/imgs/share.png',
 		txts: ['1. 数据分析', '2. 快速答疑', '3. 精准建议', '4. 解决报考难题']
 	};
 	// 绘制网络图片（需先下载）
@@ -128,20 +119,20 @@
 				drawRemoteImage(canvas, ctx, shareInfo.bgImg, 0, 0, width, height).then(() => {
 					
 					// 3. 绘制标题
-					ctx.font = (36 * ratio) + 'px sans-serif';
-					ctx.fillStyle = '#262626';
-					ctx.fillText(shareInfo.title, 116 * ratio, 1346 * ratio);
+					// ctx.font = (36 * ratio) + 'px sans-serif';
+					// ctx.fillStyle = '#262626';
+					// ctx.fillText(shareInfo.title, 116 * ratio, 1346 * ratio);
 
 					// 4. 绘制描述文字
-					ctx.font = (32 * ratio) + 'px sans-serif';
-					ctx.fillStyle = '#8b8b8b';
-					ctx.fillText(shareInfo.txts[0], 420 * ratio, 1120 * ratio);
-					ctx.fillText(shareInfo.txts[1], 420 * ratio, 1170 * ratio);
-					ctx.fillText(shareInfo.txts[2], 420 * ratio, 1220 * ratio);
-					ctx.fillText(shareInfo.txts[3], 420 * ratio, 1270 * ratio);
+					// ctx.font = (32 * ratio) + 'px sans-serif';
+					// ctx.fillStyle = '#8b8b8b';
+					// ctx.fillText(shareInfo.txts[0], 420 * ratio, 1120 * ratio);
+					// ctx.fillText(shareInfo.txts[1], 420 * ratio, 1170 * ratio);
+					// ctx.fillText(shareInfo.txts[2], 420 * ratio, 1220 * ratio);
+					// ctx.fillText(shareInfo.txts[3], 420 * ratio, 1270 * ratio);
 
 					// 5. 绘制二维码（需确保小程序码已生成）
-					drawRemoteImage(canvas, ctx, shareInfo.mpQrCode, 92 * ratio , 1060 * ratio, 232 * ratio, 232 * ratio, false).then(() => {
+					drawRemoteImage(canvas, ctx, shareInfo.mpQrCode, 180 * ratio , 866 * ratio, 390 * ratio, 390 * ratio, false).then(() => {
 						// 6. 绘制完成，将 canvas 上的内容生成图片临时文件
 						setTimeout(() => { // 确保渲染完成
 							canvasToTempFilePath(canvas);
@@ -195,19 +186,21 @@
 <style lang="scss" scoped>
 	.container {
 		width: 100%;
+		position: relative;
 
 		#canvas {
 			width: 750rpx;
 			height: 1624rpx;
-			position: fixed;
+			position: absolute;
 			left: 0;
 			top: 0;
 			pointer-events: none;
 		}
 
 		.main {
-			width: 100%;
-			height: auto;
+			width: 750rpx;
+			height: 1624rpx;
+			background-color: #ff9744;
 			position: relative;
 			left: 0;
 			top: 0;
@@ -223,7 +216,7 @@
 				height: 136rpx;
 				position: absolute;
 				left: 76rpx;
-				bottom: 86rpx;
+				bottom: 280rpx;
 			}
 		}
 	}
