@@ -43,15 +43,17 @@
 								<rich-text :nodes="item.context"></rich-text>
 							</view>
 							<view v-if="item.output" class="thinking"></view>
-							<view v-else class="create-pdf" @click="createPDF">
-								<image class="pdf" src="/static/imgs/pdf_ico.png" mode="widthFix"></image>
-								<text>生成PDF</text>
-							</view>
-							<view class="notice">
-								<view class="uicon">
-									<uni-icons type="info" size="32rpx" color="#e27b26"></uni-icons>
+							<view v-else class="wrapper">
+								<view class="notice">
+									<view class="uicon">
+										<uni-icons type="info" size="32rpx" color="#e27b26"></uni-icons>
+									</view>
+									<text class="txt">本回答由 AI 生成，内容仅供参考。</text>
 								</view>
-								<text class="txt">本回答由 AI 生成，内容仅供参考，请仔细甄别。</text>
+								<view class="create-pdf" @click="createPDF">
+									<image class="pdf" src="/static/imgs/pdf_ico.png" mode="widthFix"></image>
+									<text>生成PDF</text>
+								</view>
 							</view>
 						</view>
 					</view>
@@ -111,7 +113,7 @@
 <script setup>
 	import privacy from '@/components/privacy.vue';
 	import navbar from '@/components/navbar.vue';
-	import { ref } from 'vue';
+	import { ref, nextTick } from 'vue';
 	import { onLoad, onReady, onShow, onUnload } from '@dcloudio/uni-app';
 	import { wxLogin, getUserInfo } from '@/api/user.js';
 	import { getPackageList, createOrder, getPaymtData } from '@/api/order.js';
@@ -345,8 +347,11 @@
 			} else {
 				tempMsg += message;
 				arr[current].context = tempMsg;
+				// uni.pageScrollTo({
+				// 	selector: '.scrollTo'
+				// });
 				uni.pageScrollTo({
-					selector: '.scrollTo'
+					scrollTop: 999999999
 				});
 			}
 		});
@@ -382,7 +387,7 @@
 	// 发送消息
 	const sendFn = () => {
 		if (thinking.value) return; // AI 思考中...
-		if (!wsConnected) return; // WebSocket 未连接
+		if (!wsConnected) return connectWebSocket(); // WebSocket 未连接
 		if (!msg.value) return; // 消息不能为空
 		wsTask.send({
 			data: JSON.stringify({
@@ -406,6 +411,11 @@
 				msg.value = '';
 				sent.value = true;
 				thinking.value = true;
+				nextTick(() => {
+					uni.pageScrollTo({
+						scrollTop: 999999999
+					});
+				});
 			},
 			fail: (err) => {
 				console.error('消息发送失败', err);
@@ -509,8 +519,10 @@
 		padding: 0 25rpx;
 		font-size: 30rpx;
 		.user {
-			width: 600rpx;
+			width: auto;
 			height: auto;
+			display: inline-block;
+			float: right;
 			margin-left: 100rpx;
 			margin-bottom: 60rpx;
 			border-radius: 40rpx;
@@ -538,8 +550,25 @@
 					box-shadow: 0rpx 2rpx 8rpx 0rpx rgba(0,0,0,0.2);
 					border-radius: 20rpx;
 				}
-				.create-pdf {
+				.wrapper {
 					width: 100%;
+					display: flex;
+					justify-content: flex-end;
+					align-items: center;
+				}
+				.notice {
+					padding-right: 20rpx;
+					display: flex;
+					justify-content: flex-end;
+					align-items: center;
+					font-size: 26rpx;
+					font-weight: bolder;
+					color: #e27b26;
+					.uicon {
+						margin: 4rpx 4rpx 0 0;
+					}
+				}
+				.create-pdf {
 					display: flex;
 					justify-content: flex-end;
 					align-items: center;
@@ -551,18 +580,7 @@
 						margin-right: 8rpx;
 					}
 				}
-				.notice {
-					padding-top: 10rpx;
-					display: flex;
-					justify-content: flex-end;
-					align-items: center;
-					font-size: 26rpx;
-					font-weight: bolder;
-					color: #e27b26;
-					.uicon {
-						margin: 4rpx 4rpx 0 0;
-					}
-				}
+				
 			}
 		}
 	}
@@ -681,15 +699,17 @@
 	}
 	
 	.footer {
-		width: 700rpx;
-		height: 92rpx;
+		width: 100%;
+		height: 200rpx;
+		background-color: #ffffff;
 		position: fixed;
 		z-index: 66;
-		left: 25rpx;
-		bottom: 90rpx;
+		left: 0rpx;
+		bottom: 0rpx;
 		.sendable {
-			width: 100%;
-			height: 100%;
+			width: 700rpx;
+			height: 92rpx;
+			margin: 18rpx auto 90rpx;
 			box-sizing: border-box;
 			padding-left: 30rpx;
 			border-radius: 46rpx;
@@ -720,8 +740,8 @@
 	// AI thinking animation
 	.thinking {
 		width: 40rpx;
-		// margin: 10rpx 0;
-		margin: 10rpx 0 10rpx 272rpx;
+		margin: 10rpx 0;
+		// margin: 10rpx 0 10rpx 252rpx;
 		aspect-ratio: 1;
 		border-radius: 50%;
 		background: 
