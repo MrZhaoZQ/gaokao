@@ -30,8 +30,8 @@
 					<input type="number" v-model="amount" placeholder="请输入提现金额" />
 				</view>
 				<view class="notice">
-					<view>可提现金额：¥{{total}}</view>
-					<view class="withdraw-all">全部提现</view>
+					<view>可提现金额：¥{{total.toFixed(2)}}</view>
+					<view class="withdraw-all" @click="withdrawAllFn">全部提现</view>
 				</view>
 			</view>
 		</view>
@@ -69,6 +69,9 @@
 	const amount = ref('');
 	const selectFn = (idx) => {
 		selectedIdx.value = idx;
+	};
+	const withdrawAllFn = () => {
+		amount.value = total.value;
 	};
 	const withdrawFn = () => {
 		const accountV = account.value;

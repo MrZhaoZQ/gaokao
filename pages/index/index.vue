@@ -158,6 +158,7 @@
 			} else {
 				sendable.value = false;
 			}
+			getApp().globalData.userId = res?.id || '';
 		}, errMsg => {
 			uni.hideLoading();
 			uni.showToast({
@@ -184,6 +185,7 @@
 							getUserInfoFn()
 						}
 					});
+					getApp().globalData.userId = res?.id || '';
 				}, errMsg => {
 					uni.hideLoading();
 					uni.showToast({

@@ -1,7 +1,8 @@
 <script>
 	export default {
 		globalData: {
-			refId: ""
+			userId: '', // 用于分享页面时携带参数
+			refId: ''
 		},
 		onLaunch: function(e) {
 			// 获取小程序码的参数分享ID

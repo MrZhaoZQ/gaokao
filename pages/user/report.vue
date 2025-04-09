@@ -5,11 +5,12 @@
 				v-for="item in list"
 				:key="item.id"
 				class="item"
+				@click="viewReportFn(item.pdfFile)"
 			>
 				<image class="pdf" src="/static/imgs/pad.png" mode="widthFix"></image>
 				<view class="info">
 					<view class="time">{{item.time}}</view>
-					<view class="title">{{item.content}}</view>
+					<view class="title">{{item.question}}</view>
 				</view>
 			</view>
 			<view v-if="!more" class="no-more">
@@ -79,6 +80,39 @@
 				mask: true,
 				icon: "none"
 			});
+		});
+	};
+	// 查看报告
+	const viewReportFn = (pdfUrl) => {
+		uni.showLoading({ mask: true });
+		uni.downloadFile({
+			url: pdfUrl,
+			success: res => {
+				uni.openDocument({
+					filePath: res.tempFilePath,
+					fileType: 'pdf',
+					showMenu: true,
+					success: () => {
+						uni.hideLoading();
+					},
+					fail: () => {
+						uni.hideLoading();
+						uni.showToast({
+							title: '打开报告失败，请稍后重试～',
+							mask: true,
+							icon: 'none'
+						});
+					}
+				});
+			},
+			fail: () => {
+				uni.hideLoading();
+				uni.showToast({
+					title: '加载报告失败，请稍后重试～',
+					mask: true,
+					icon: 'none'
+				});
+			}
 		});
 	};
 	// 监听页面加载
