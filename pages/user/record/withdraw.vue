@@ -43,9 +43,10 @@
 <script setup>
 	import { ref } from 'vue';
 	import { onLoad, onPullDownRefresh, onReachBottom } from '@dcloudio/uni-app';
+	import { getUserInfo } from '@/api/user.js';
 	import { getWithdrawRecords } from '@/api/order.js';
 	const visible = ref(true);
-	const total = ref(20);
+	const total = ref(0);
 	const list = ref([{
 		cashType: 0,
 		time: '2025-03-20 20:00:00',
@@ -123,10 +124,27 @@
 			url: '/pages/user/withdraw'
 		});
 	};
+	// 获取用户信息
+	const getUserInfoFn = () => {
+		uni.showLoading({ mask: true });
+		getUserInfo().then(res => {
+			total.value = res?.account || 0;
+			// 获取提现记录
+			getListFn(false);
+		}, errMsg => {
+			uni.hideLoading();
+			uni.showToast({
+				title: errMsg || '获取用户信息失败，请稍后重试~',
+				mask: true,
+				icon: "none"
+			});
+		});
+	};
 	// 监听页面加载
 	onLoad((options) => {
 		// console.log('onLoad: ', options);
-		getListFn(false);
+		// 获取用户信息
+		getUserInfoFn();
 	});
 	// 监听页面刷新
 	onPullDownRefresh(() => {

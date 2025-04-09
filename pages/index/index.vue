@@ -50,7 +50,7 @@
 									</view>
 									<text class="txt">本回答由 AI 生成，内容仅供参考。</text>
 								</view>
-								<view class="create-pdf" @click="createPDF">
+								<view v-if="item.hasReport" class="create-pdf" @click="createPDF(item.msgKey)">
 									<image class="pdf" src="/static/imgs/pdf_ico.png" mode="widthFix"></image>
 									<text>生成PDF</text>
 								</view>
@@ -58,7 +58,6 @@
 						</view>
 					</view>
 				</view>
-				<view class="scrollTo"></view>
 			</view>
 		</view>
 		
@@ -115,8 +114,9 @@
 	import navbar from '@/components/navbar.vue';
 	import { ref, nextTick } from 'vue';
 	import { onLoad, onReady, onShow, onUnload } from '@dcloudio/uni-app';
-	import { wxLogin, getUserInfo } from '@/api/user.js';
+	import { wxLogin, getUserInfo, getPdfReport } from '@/api/user.js';
 	import { getPackageList, createOrder, getPaymtData } from '@/api/order.js';
+	import { randomString } from '@/utils/tool.js';
 	const showPrivacy = ref(false);
 	const menuDrawer = ref('');
 	const mine = ref([
@@ -319,7 +319,7 @@
 		// uni-app的socket，分全局socket和socketTask。全局socket只能有一个，一旦被占用就无法再开启。一般使用socketTask。
 		// SocketTask 由 uni.connectSocket() 接口创建。
 		wsTask = uni.connectSocket({
-			url: 'ws://123.207.184.169:8888/ws', // WebSocket 地址
+			url: 'wss://gxb.jmd-mall.com/ws', // WebSocket 地址
 			success: () => {
 				console.log('WebSocket 连接中...');
 			},
@@ -336,20 +336,20 @@
 		});
 		// 监听 WebSocket 消息事件
 		wsTask.onMessage((res) => {
-			const message = res.data;
-			// console.log('收到消息: ', message);
 			const arr = list.value;
-			if (message == "<message>") { // 开头
-				tempMsg = "";
-			} else if (message == '</message>') {// 结尾
+			let message = res.data;
+			// console.log('收到消息: ', message);
+			if (message == '<message>' || message == '<noreport>') { // 开头
+				tempMsg = '';
+			} else if (message == '</message>' || message == '</noreport>') {// 结尾
+				arr[current].hasReport = message == '</noreport>' ? false : true;
 				arr[current].output = false;
 				thinking.value = false;
+			} else if (message == '```' || message == 'html' || message == '###') { // 过滤特殊字符
+				message = '';
 			} else {
 				tempMsg += message;
 				arr[current].context = tempMsg;
-				// uni.pageScrollTo({
-				// 	selector: '.scrollTo'
-				// });
 				uni.pageScrollTo({
 					scrollTop: 999999999
 				});
@@ -386,31 +386,37 @@
 	};
 	// 发送消息
 	const sendFn = () => {
-		if (thinking.value) return; // AI 思考中...
 		if (!wsConnected) return connectWebSocket(); // WebSocket 未连接
 		if (!msg.value) return; // 消息不能为空
+		if (thinking.value) return; // AI 思考中...
+		thinking.value = true;
+		const msgKey = randomString();
 		wsTask.send({
 			data: JSON.stringify({
 				type: "user",
 				token: userInfo.openid,
 				uid: userInfo.id,
+				key: msgKey,
 				content: msg.value
 			}),
 			success: () => {
 				console.log('消息发送成功:', msg.value);
 				list.value.push({
+					msgKey,
 					type: 1,
 					context: msg.value
 				});
 				list.value.push({
+					msgKey,
 					type: 2,
 					output: true,
+					hasReport: true,
 					context: ''
 				});
 				current = list.value.length - 1;
 				msg.value = '';
 				sent.value = true;
-				thinking.value = true;
+				// thinking.value = true;
 				nextTick(() => {
 					uni.pageScrollTo({
 						scrollTop: 999999999
@@ -419,12 +425,74 @@
 			},
 			fail: (err) => {
 				console.error('消息发送失败', err);
+				uni.showToast({
+					title: '消息发送失败，请稍后重试~',
+					mask: true,
+					icon: "none"
+				});
 			}
 		});
 	};
 	// 点击“生成PDF”
-	const createPDF = () => {
-		
+	const createPDF = (msgKey) => {
+		uni.showLoading({ mask: true });
+		getPdfReport({
+			reportKey: msgKey
+		}).then(res => {
+			console.log(res)
+			if (res?.pdfFile) {
+				uni.downloadFile({
+					url: res.pdfFile,
+					success: succ => {
+						uni.openDocument({
+							filePath: succ.tempFilePath,
+							fileType: 'pdf',
+							showMenu: true,
+							success: () => {
+								uni.hideLoading();
+							},
+							fail: () => {
+								uni.hideLoading();
+								uni.showToast({
+									title: '打开报告失败，请稍后重试～',
+									mask: true,
+									icon: 'none'
+								});
+							}
+						});
+					},
+					fail: () => {
+						uni.hideLoading();
+						uni.showToast({
+							title: '加载报告失败，请稍后重试～',
+							mask: true,
+							icon: 'none'
+						});
+					}
+				});
+			} else if (res?.status === 5 || res?.status === 6) {
+				uni.hideLoading();
+				uni.showToast({
+					title: '报告生成中，请稍候在“我的报告”列表中查看～',
+					mask: true,
+					icon: "none"
+				});
+			} else {
+				uni.hideLoading();
+				uni.showToast({
+					title: '生成报告失败，请稍后重试~',
+					mask: true,
+					icon: "none"
+				});
+			}
+		}, errMsg => {
+			uni.hideLoading();
+			uni.showToast({
+				title: errMsg || '生成报告失败，请稍后重试~',
+				mask: true,
+				icon: "none"
+			});
+		});
 	};
 	// 监听页面加载
 	onLoad((options) => {
@@ -549,6 +617,7 @@
 					background-color: #F5F5F5;
 					box-shadow: 0rpx 2rpx 8rpx 0rpx rgba(0,0,0,0.2);
 					border-radius: 20rpx;
+					font-size: 32rpx;
 				}
 				.wrapper {
 					width: 100%;
@@ -557,7 +626,6 @@
 					align-items: center;
 				}
 				.notice {
-					padding-right: 20rpx;
 					display: flex;
 					justify-content: flex-end;
 					align-items: center;
@@ -569,6 +637,7 @@
 					}
 				}
 				.create-pdf {
+					padding-left: 20rpx;
 					display: flex;
 					justify-content: flex-end;
 					align-items: center;
@@ -756,6 +825,14 @@
 	
 	// for AI result
 	::v-deep .ai-title {
+		margin: 6px 0;
 		font-weight: bolder;
+	}
+	
+	::v-deep .ai-ul {
+		padding-bottom: 12px;
+		&:last-child {
+			padding-bottom: 0;
+		}
 	}
 </style>

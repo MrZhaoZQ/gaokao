@@ -1,7 +1,7 @@
 <template>
 	<view class="container">
 		<view v-if="list.length" class="header">
-			<view class="total">累计获得奖励：<text class="num">{{total}}</text><text>元</text></view>
+			<view class="total">累计获得奖励：<text class="num">{{total.toFixed(2)}}</text><text>元</text></view>
 			<view class="withdraw" @click="toWithdrawFn">提现</view>
 		</view>
 		
@@ -36,8 +36,8 @@
 <script setup>
 	import { ref } from 'vue';
 	import { onLoad, onPullDownRefresh, onReachBottom } from '@dcloudio/uni-app';
-	import { getRewardRecords } from '@/api/user.js';
-	const total = ref(5.88);
+	import { getUserInfo, getRewardRecords } from '@/api/user.js';
+	const total = ref(0);
 	const list = ref([]);
 	const more = ref(true);
 	let pageNum = 1, pageSize = 10, requesting = false;
@@ -91,6 +91,22 @@
 			});
 		});
 	};
+	// 获取用户信息
+	const getUserInfoFn = () => {
+		uni.showLoading({ mask: true });
+		getUserInfo().then(res => {
+			total.value = res?.bonusTotal || 0;
+			// 获取奖励记录
+			getListFn(false);
+		}, errMsg => {
+			uni.hideLoading();
+			uni.showToast({
+				title: errMsg || '获取用户信息失败，请稍后重试~',
+				mask: true,
+				icon: "none"
+			});
+		});
+	};
 	// 点击“提现”
 	const toWithdrawFn = () => {
 		uni.navigateTo({
@@ -100,7 +116,8 @@
 	// 监听页面加载
 	onLoad((options) => {
 		// console.log('onLoad: ', options);
-		getListFn(false);
+		// 获取用户信息
+		getUserInfoFn();
 	});
 	// 监听页面刷新
 	onPullDownRefresh(() => {

@@ -85,6 +85,18 @@ export function getRewardRecords(data) {
 }
 
 /**
+ * @description 生成PDF报告
+ * @param {*} data 
+ */
+export function getPdfReport(data) {
+	return request({
+		url: '/wechat/report/info',
+		method: 'post',
+		data
+	})
+}
+
+/**
  * @description 获取报告列表
  * @param {*} data 
  */

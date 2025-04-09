@@ -55,6 +55,7 @@
 <script setup>
 	import { ref } from 'vue';
 	import { onLoad, onShow } from '@dcloudio/uni-app';
+	import { getUserInfo } from '@/api/user.js';
 	import { submitWithdraw } from '@/api/order.js';
 	const total = ref(0);
 	const selectList = ref([

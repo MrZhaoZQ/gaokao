@@ -9,7 +9,7 @@
 				<image class="avatar" src="/static/imgs/user.png" mode="widthFix"></image>
 				<view class="info">
 					<view>微信用户</view>
-					<view class="time">注册时间：{{item.createTime}}</view>
+					<view class="time">注册时间：{{item.time}}</view>
 				</view>
 				<image
 					class="status"

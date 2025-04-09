@@ -28,7 +28,7 @@
 				'height': height + 'px',
 				// 'top': top + 'px'
 				'padding-top': top + 'px',
-				'padding-bottom': top / 2 + 'px'
+				'padding-bottom': '10px'
 			}
 		}
 	});
