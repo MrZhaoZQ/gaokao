@@ -104,7 +104,7 @@
 		}, errMsg => {
 			uni.hideLoading();
 			uni.showToast({
-				title: errMsg || '信息提交失败，请稍后重试~',
+				title: errMsg || '信息提交失败，请稍后重试',
 				mask: true,
 				icon: "none"
 			});
@@ -119,7 +119,7 @@
 		}, errMsg => {
 			uni.hideLoading();
 			uni.showToast({
-				title: errMsg || '获取用户信息失败，请稍后重试~',
+				title: errMsg || '获取用户信息失败，请稍后重试',
 				mask: true,
 				icon: "none"
 			});

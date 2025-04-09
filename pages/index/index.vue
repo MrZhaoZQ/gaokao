@@ -162,7 +162,7 @@
 		}, errMsg => {
 			uni.hideLoading();
 			uni.showToast({
-				title: errMsg || '获取用户信息失败，请稍后重试~',
+				title: errMsg || '获取用户信息失败，请稍后重试',
 				mask: true,
 				icon: "none"
 			});
@@ -189,7 +189,7 @@
 				}, errMsg => {
 					uni.hideLoading();
 					uni.showToast({
-						title: errMsg || '登录异常，请稍后重试~',
+						title: errMsg || '登录异常，请稍后重试',
 						mask: true,
 						icon: "none"
 					});
@@ -232,7 +232,7 @@
 			purchasePopup.value.open();
 		}, errMsg => {
 			uni.showToast({
-				title: errMsg || '获取付费套餐失败，请稍后重试~',
+				title: errMsg || '获取付费套餐失败，请稍后重试',
 				mask: true,
 				icon: "none"
 			});
@@ -283,7 +283,7 @@
 						// console.log(errMsg)
 						if (errMsg && errMsg.indexOf('cancel') < 0) {
 							uni.showToast({
-								title: '支付失败，请稍后重试~',
+								title: '支付失败，请稍后重试',
 								mask: true,
 								icon: "none"
 							});
@@ -293,7 +293,7 @@
 			}, errMsg => {
 				uni.hideLoading();
 				uni.showToast({
-					title: errMsg || '支付失败，请稍后重试~',
+					title: errMsg || '支付失败，请稍后重试',
 					mask: true,
 					icon: "none"
 				});
@@ -301,7 +301,7 @@
 		}, errMsg => {
 			uni.hideLoading();
 			uni.showToast({
-				title: errMsg || '创建订单失败，请稍后重试~',
+				title: errMsg || '创建订单失败，请稍后重试',
 				mask: true,
 				icon: "none"
 			});
@@ -428,7 +428,7 @@
 			fail: (err) => {
 				console.error('消息发送失败', err);
 				uni.showToast({
-					title: '消息发送失败，请稍后重试~',
+					title: '消息发送失败，请稍后重试',
 					mask: true,
 					icon: "none"
 				});
@@ -456,7 +456,7 @@
 							fail: () => {
 								uni.hideLoading();
 								uni.showToast({
-									title: '打开报告失败，请稍后重试～',
+									title: '打开报告失败，请稍后重试',
 									mask: true,
 									icon: 'none'
 								});
@@ -466,7 +466,7 @@
 					fail: () => {
 						uni.hideLoading();
 						uni.showToast({
-							title: '加载报告失败，请稍后重试～',
+							title: '加载报告失败，请稍后重试',
 							mask: true,
 							icon: 'none'
 						});
@@ -475,14 +475,14 @@
 			} else if (res?.status === 5 || res?.status === 6) {
 				uni.hideLoading();
 				uni.showToast({
-					title: '报告生成中，请稍候在“我的报告”列表中查看～',
+					title: '报告生成中，请稍候在“我的报告”列表中查看',
 					mask: true,
 					icon: "none"
 				});
 			} else {
 				uni.hideLoading();
 				uni.showToast({
-					title: '生成报告失败，请稍后重试~',
+					title: '生成报告失败，请稍后重试',
 					mask: true,
 					icon: "none"
 				});
@@ -490,7 +490,7 @@
 		}, errMsg => {
 			uni.hideLoading();
 			uni.showToast({
-				title: errMsg || '生成报告失败，请稍后重试~',
+				title: errMsg || '生成报告失败，请稍后重试',
 				mask: true,
 				icon: "none"
 			});

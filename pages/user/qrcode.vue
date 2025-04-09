@@ -46,7 +46,7 @@
 			};
 			image.onerror = () => {
 				console.error('图片下载失败:', imgUrl);
-				reject('图片下载失败，请稍后重试～');
+				reject('图片下载失败，请稍后重试');
 			};
 		});
 	};
@@ -139,14 +139,14 @@
 						}, 300);
 					}, () => {
 						uni.showToast({
-							title: errMsg || '生成失败，请稍后重试～',
+							title: errMsg || '生成失败，请稍后重试',
 							mask: true,
 							icon: 'none'
 						});
 					});
 				}, errMsg => {
 					uni.showToast({
-						title: errMsg || '生成失败，请稍后重试～',
+						title: errMsg || '生成失败，请稍后重试',
 						mask: true,
 						icon: 'none'
 					});
@@ -156,7 +156,7 @@
 				console.log("获取canvas元素失败");
 				uni.hideLoading();
 				uni.showToast({
-					title: '生成失败，请稍后重试～',
+					title: '生成失败，请稍后重试',
 					mask: true,
 					icon: 'none'
 				});

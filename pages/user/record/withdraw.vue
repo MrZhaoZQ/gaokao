@@ -98,7 +98,7 @@
 				// console.log(pageNum, more.value, list.value)
 			} else {
 				uni.showToast({
-					title: res?.errmsg || '获取列表失败，请稍后重试~',
+					title: res?.errmsg || '获取列表失败，请稍后重试',
 					mask: true,
 					icon: "none"
 				});
@@ -108,7 +108,7 @@
 			uni.hideLoading();
 			if (refreshing) uni.stopPullDownRefresh();
 			uni.showToast({
-				title: errMsg || '获取列表失败，请稍后重试~',
+				title: errMsg || '获取列表失败，请稍后重试',
 				mask: true,
 				icon: "none"
 			});
@@ -134,7 +134,7 @@
 		}, errMsg => {
 			uni.hideLoading();
 			uni.showToast({
-				title: errMsg || '获取用户信息失败，请稍后重试~',
+				title: errMsg || '获取用户信息失败，请稍后重试',
 				mask: true,
 				icon: "none"
 			});

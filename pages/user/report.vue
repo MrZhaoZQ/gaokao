@@ -66,7 +66,7 @@
 				// console.log(pageNum, more.value, list.value)
 			} else {
 				uni.showToast({
-					title: res?.errmsg || '获取列表失败，请稍后重试~',
+					title: res?.errmsg || '获取列表失败，请稍后重试',
 					mask: true,
 					icon: "none"
 				});
@@ -76,7 +76,7 @@
 			uni.hideLoading();
 			if (refreshing) uni.stopPullDownRefresh();
 			uni.showToast({
-				title: errMsg || '获取列表失败，请稍后重试~',
+				title: errMsg || '获取列表失败，请稍后重试',
 				mask: true,
 				icon: "none"
 			});
@@ -98,7 +98,7 @@
 					fail: () => {
 						uni.hideLoading();
 						uni.showToast({
-							title: '打开报告失败，请稍后重试～',
+							title: '打开报告失败，请稍后重试',
 							mask: true,
 							icon: 'none'
 						});
@@ -108,7 +108,7 @@
 			fail: () => {
 				uni.hideLoading();
 				uni.showToast({
-					title: '加载报告失败，请稍后重试～',
+					title: '加载报告失败，请稍后重试',
 					mask: true,
 					icon: 'none'
 				});
