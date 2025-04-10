@@ -38,4 +38,10 @@
 	button:after {
 		content: none;
 	}
+	/* 去除textarea的默认样式 */
+	textarea {
+		margin: 0;
+		padding: 0;
+		border: none;
+	}
 </style>

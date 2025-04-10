@@ -96,7 +96,15 @@
 		<!-- 固定底部 -->
 		<view class="footer">
 			<view class="sendable">
-				<input type="text" v-model="msg" :disabled="!sendable" placeholder="给AI雷达志愿发送消息" />
+				<textarea
+					class="inpt"
+					type="text"
+					v-model="msg"
+					:disabled="!sendable"
+					auto-height
+					disable-default-padding
+					placeholder="给AI雷达志愿发送消息"
+				></textarea>
 				<image
 					class="send"
 					:src="thinking ? '../../static/imgs/send_pause.png' : '../../static/imgs/send.png'"
@@ -771,7 +779,7 @@
 	
 	.footer {
 		width: 100%;
-		height: 200rpx;
+		min-height: 200rpx;
 		background-color: #ffffff;
 		position: fixed;
 		z-index: 66;
@@ -779,17 +787,20 @@
 		bottom: 0rpx;
 		.sendable {
 			width: 700rpx;
-			height: 92rpx;
-			margin: 18rpx auto 90rpx;
+			min-height: 92rpx;
+			margin: 18rpx auto 44rpx;
 			box-sizing: border-box;
 			padding-left: 30rpx;
 			border-radius: 46rpx;
 			background-color: #f5f5f5;
 			display: flex;
 			align-items: center;
-			input {
+			.inpt {
 				flex: 1;
+				min-height: 46rpx;
+				padding: 23rpx 0;
 				font-size: 32rpx;
+				line-height: 46rpx;
 			}
 			.send {
 				width: 56rpx;
