@@ -1,5 +1,5 @@
 // 配置域名
-export const BASE_URL = "https://gxb.jmd-mall.com"
+export const BASE_URL = "https://xcx.yizhidahui.com"
 const LOGIN_URLS = ["/wechat/login/auth"]
 
 /**

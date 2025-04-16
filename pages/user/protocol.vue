@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<web-view src="https://gxb.admin.jmd-mall.com/protocol.html"></web-view>
+		<web-view src="https://admin.yizhidahui.com/protocol.html"></web-view>
 	</view>
 </template>
 

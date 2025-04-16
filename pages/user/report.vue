@@ -84,6 +84,11 @@
 	};
 	// 查看报告
 	const viewReportFn = (pdfUrl) => {
+		if (!pdfUrl) return uni.showToast({
+			title: '报告不存在，请稍后重试',
+			mask: true,
+			icon: 'none'
+		});
 		uni.showLoading({ mask: true });
 		uni.downloadFile({
 			url: pdfUrl,

@@ -329,7 +329,7 @@
 		// uni-app的socket，分全局socket和socketTask。全局socket只能有一个，一旦被占用就无法再开启。一般使用socketTask。
 		// SocketTask 由 uni.connectSocket() 接口创建。
 		wsTask = uni.connectSocket({
-			url: 'wss://gxb.jmd-mall.com/ws', // WebSocket 地址
+			url: 'wss://xcx.yizhidahui.com/ws', // WebSocket 地址
 			success: () => {
 				console.log('WebSocket 连接中...');
 			},
@@ -449,7 +449,6 @@
 		getPdfReport({
 			reportKey: msgKey
 		}).then(res => {
-			console.log(res)
 			if (res?.pdfFile) {
 				uni.downloadFile({
 					url: res.pdfFile,
@@ -669,7 +668,7 @@
 		min-height: 786rpx;
 		padding-top: 46rpx;
 		border-radius: 46rpx 46rpx 0 0;
-		background: url('https://health.image.jmd-mall.com/gxb/imgs/popup_bg.png') no-repeat;
+		background: url('https://xcx.yizhidahui.com/upload/imgs/popup_bg.png') no-repeat;
 		background-size: 100% 100%;
 		background-color: #ffffff;
 		.subtitle {

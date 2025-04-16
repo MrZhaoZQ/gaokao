@@ -1,7 +1,7 @@
 <template>
 	<view class="container">
 		<view class="main">
-			<image class="bg" src="https://health.image.jmd-mall.com/gxb/imgs/promo.jpg" mode="widthFix"></image>
+			<image class="bg" src="https://xcx.yizhidahui.com/upload/imgs/promo.jpg" mode="widthFix"></image>
 			<view class="generate" @click="generateFn"></view>
 		</view>
 		<!-- 微信小程序基础库2.9.0起支持一套新Canvas 2D接口（需指定type属性），同时支持同层渲染 -->
@@ -19,7 +19,7 @@
 	const shareInfo = {
 		title: 'AI雷达志愿',
 		mpQrCode: '',
-		bgImg: 'https://health.image.jmd-mall.com/gxb/imgs/share.png',
+		bgImg: 'https://xcx.yizhidahui.com/upload/imgs/share.png',
 		txts: ['1. 数据分析', '2. 快速答疑', '3. 精准建议', '4. 解决报考难题']
 	};
 	// 绘制网络图片（需先下载）
@@ -166,8 +166,8 @@
 	// 获取用户信息
 	const getUserInfoFn = () => {
 		getUserInfo().then(res => {
-			// 根据返回数据展示对应内容，如用户是否已付费等
-			shareInfo.mpQrCode = 'https://health.image.jmd-mall.com' + res.inviteQrCode
+			// 当前用户的小程序码
+			shareInfo.mpQrCode = res.inviteQrCode
 		}, () => {
 			getUserInfoFn();
 		});
