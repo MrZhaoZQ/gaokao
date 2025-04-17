@@ -40,6 +40,7 @@
 		getPaymtRecords({
 			page: refreshing ? 1 : pageNum,
 			pageSize,
+			status: 6 // 5: 待支付；6: 已支付；7: 已完成
 		}).then(res => {
 			requesting = false;
 			uni.hideLoading();
