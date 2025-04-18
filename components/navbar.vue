@@ -22,6 +22,7 @@
 		emits('clickMenu');
 	};
 	onMounted(() => {
+		// #ifdef MP-WEIXIN
 		const { height, top } = uni.getMenuButtonBoundingClientRect();
 		if (height && top) {
 			styleObj.value = {
@@ -31,13 +32,19 @@
 				'padding-bottom': '10px'
 			}
 		}
+		// #endif
+		
+		// #ifdef H5
+		styleObj.value = {
+			'height': '44px'
+		}
+		// #endif
 	});
 </script>
 
 <style lang="scss" scoped>
 	.navbar {
 		width: 100%;
-		// position: fixed;
 		position: sticky;
 		z-index: 88;
 		left: 0;

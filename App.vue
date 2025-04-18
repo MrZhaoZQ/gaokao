@@ -1,4 +1,8 @@
 <script>
+	// #ifdef H5
+	import { initWxJsSDK } from '@/utils/wxjssdk.js'
+	// #endif
+	
 	export default {
 		globalData: {
 			userId: '', // 用于分享页面时携带参数
@@ -9,6 +13,10 @@
 			if (e.query && e.query.refId) {
 				this.globalData.refId = e.query.refId
 			}
+			
+			// #ifdef H5
+			initWxJsSDK()
+			// #endif
 		},
 		onShow: function(e) {
 			// 获取小程序码的参数分享ID，以免扫码后再次扫另一新的码参数未更新

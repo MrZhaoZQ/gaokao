@@ -4,17 +4,17 @@
 		<navbar @clickMenu="clickMenuFn"></navbar>
 		
 		<!-- 隐私弹框 -->
-		<privacy v-model="showPrivacy" @agree="mpLogin"></privacy>
+		<privacy v-model="showPrivacy" @agree="loginFn"></privacy>
 		
 		<!-- 左侧“个人中心”侧滑菜单 -->
 		<uni-drawer ref="menuDrawer" mode="left" :mask-click="true">
 			<scroll-view class="mine-list" style="height: 100%;" scroll-y>
-				<image class="avatar" src="/static/imgs/user.png" mode="widthFix"></image>
+				<image class="avatar" src="/static/imgs/user.png" mode="aspectFit"></image>
 				<view 
 					v-for="(item, index) in mine"
 					:key="index"
 					class="mine-item"
-					@click="clickMenuItemFn(index)"
+					@click="clickMenuItemFn(item.path)"
 				>
 					<image class="ico" :src="item.ico" mode="widthFix"></image>
 					<text>{{item.name}}</text>
@@ -108,7 +108,7 @@
 				<image
 					class="send"
 					:src="thinking ? '../../static/imgs/send_pause.png' : '../../static/imgs/send.png'"
-					mode="widthFix"
+					mode="aspectFit"
 					@click="sendFn"
 				></image>
 			</view>
@@ -176,7 +176,8 @@
 			});
 		});
 	};
-	// 微信小程序登录 (同意隐私协议)
+	// #ifdef MP-WEIXIN
+	// 微信小程序登录
 	const mpLogin = () => {
 		uni.showLoading({ mask: true });
 		uni.login({
@@ -208,21 +209,31 @@
 			}
 		});
 	};
+	// #endif
+	// 登录 (同意隐私协议)
+	const loginFn = () => {
+		// #ifdef MP-WEIXIN
+		mpLogin();
+		// #endif
+		
+		// #ifdef H5
+		
+		// #endif
+	};
 	// 点击左上角menu图标
 	const clickMenuFn = () => {
 		menuDrawer.value.open();
 	};
 	// 点击左上角menu item
-	const clickMenuItemFn = (idx, path) => {
-		const arr = mine.value;
-		if (idx === 6) {
+	const clickMenuItemFn = (path) => {
+		if (path) {
+			uni.navigateTo({
+				url: path
+			});
+		} else {
 			menuDrawer.value.close();
 			// purchasePopup.value.open();
 			showBuyPopupFn();
-		} else {
-			uni.navigateTo({
-				url: arr[idx].path
-			});
 		}
 	};
 	// 未付费用户点击底部输入框、发送按钮
@@ -803,7 +814,7 @@
 			}
 			.send {
 				width: 56rpx;
-				height: auto;
+				height: 56rpx;
 				padding: 18rpx 30rpx 18rpx 26rpx;
 			}
 		}

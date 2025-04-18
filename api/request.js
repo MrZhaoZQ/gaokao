@@ -13,6 +13,7 @@ export function request({url, data, method}) {
 		if (!token && !LOGIN_URLS.includes(url)) {
 			// 重定向到首页走登录的逻辑
 			console.log('need to login')
+			uni.hideLoading()
 			return uni.reLaunch({
 				url: '/pages/index/index'
 			})
