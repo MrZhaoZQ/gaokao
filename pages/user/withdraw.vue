@@ -42,7 +42,7 @@
 			<view class="withdraw-rules">提现规则：</view>
 			<text>
 				1. 最低提现金额：30元。\r\n
-				2. 提现方式：支持支付宝、微信等多种方式。\r\n
+				2. 提现方式：微信。\r\n
 				3. 提现时间：1-7天到账，具体因应用和银行而异。\r\n
 				4. 提现限制：每周可提现一次。\r\n
 				5. 账户要求：提现前需完成实名认证或绑定支付账户。\r\n
@@ -60,7 +60,7 @@
 	const total = ref(0);
 	const selectList = ref([
 		{ ico: '/static/imgs/wechat1.png', selectedIco: '/static/imgs/wechat0.png', name: '微信' },
-		{ ico: '/static/imgs/alipay1.png', selectedIco: '/static/imgs/alipay0.png', name: '支付宝' }
+		// { ico: '/static/imgs/alipay1.png', selectedIco: '/static/imgs/alipay0.png', name: '支付宝' }
 	]);
 	const selectedIdx = ref(0);
 	let pageShowTimes = 0;
