@@ -89,6 +89,7 @@
 			mask: true,
 			icon: 'none'
 		});
+		// #ifdef MP-WEIXIN
 		uni.showLoading({ mask: true });
 		uni.downloadFile({
 			url: pdfUrl,
@@ -119,6 +120,11 @@
 				});
 			}
 		});
+		// #endif
+		
+		// #ifdef H5
+		window.open('pdfUrl', '_blank');
+		// #endif
 	};
 	// 监听页面加载
 	onLoad((options) => {

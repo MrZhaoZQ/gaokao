@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta describe="AI雷达志愿"></meta>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+</head>
+<body>
+    <script>
+		// 获取url中的参数
+		// function getUrlParam(name) {
+		// 	var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+		// 	var r = window.location.search.substr(1).match(reg);
+		// 	if (r != null) return decodeURI(r[2]); return null;
+		// }
+		
+		// 携带参数code、state重定向到授权页面
+		window.location.replace('https://h5.yizhidahui.com/#/pages/user/auth' + window.location.search);
+		// window.location.replace('https://h5.yizhidahui.com/#/pages/user/auth?code=' + getUrlParam('code') + '&refId=' + getUrlParam('state'));
+    </script>
+</body>
+</html>

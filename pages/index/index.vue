@@ -4,17 +4,17 @@
 		<navbar @clickMenu="clickMenuFn"></navbar>
 		
 		<!-- 隐私弹框 -->
-		<privacy v-model="showPrivacy" @agree="mpLogin"></privacy>
+		<privacy v-model="showPrivacy" @agree="loginFn"></privacy>
 		
 		<!-- 左侧“个人中心”侧滑菜单 -->
 		<uni-drawer ref="menuDrawer" mode="left" :mask-click="true">
 			<scroll-view class="mine-list" style="height: 100%;" scroll-y>
-				<image class="avatar" src="/static/imgs/user.png" mode="widthFix"></image>
+				<image class="avatar" src="/static/imgs/user.png" mode="aspectFit"></image>
 				<view 
 					v-for="(item, index) in mine"
 					:key="index"
 					class="mine-item"
-					@click="clickMenuItemFn(index)"
+					@click="clickMenuItemFn(item.path)"
 				>
 					<image class="ico" :src="item.ico" mode="widthFix"></image>
 					<text>{{item.name}}</text>
@@ -108,7 +108,7 @@
 				<image
 					class="send"
 					:src="thinking ? '../../static/imgs/send_pause.png' : '../../static/imgs/send.png'"
-					mode="widthFix"
+					mode="aspectFit"
 					@click="sendFn"
 				></image>
 			</view>
@@ -176,7 +176,8 @@
 			});
 		});
 	};
-	// 微信小程序登录 (同意隐私协议)
+	// #ifdef MP-WEIXIN
+	// 微信小程序登录
 	const mpLogin = () => {
 		uni.showLoading({ mask: true });
 		uni.login({
@@ -208,21 +209,33 @@
 			}
 		});
 	};
+	// #endif
+	// 登录 (同意隐私协议)
+	const loginFn = () => {
+		// #ifdef MP-WEIXIN
+		mpLogin();
+		// #endif
+		
+		// #ifdef H5
+		const REDIRECT_URI = encodeURIComponent('https://h5.yizhidahui.com/redirect.html');
+		const refId = getApp().globalData.refId;
+		window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx62f5435c67d1a41c&redirect_uri=' + REDIRECT_URI + '&response_type=code&scope=snsapi_userinfo&state=' + refId + '#wechat_redirect';
+		// #endif
+	};
 	// 点击左上角menu图标
 	const clickMenuFn = () => {
 		menuDrawer.value.open();
 	};
 	// 点击左上角menu item
-	const clickMenuItemFn = (idx, path) => {
-		const arr = mine.value;
-		if (idx === 6) {
+	const clickMenuItemFn = (path) => {
+		if (path) {
+			uni.navigateTo({
+				url: path
+			});
+		} else {
 			menuDrawer.value.close();
 			// purchasePopup.value.open();
 			showBuyPopupFn();
-		} else {
-			uni.navigateTo({
-				url: arr[idx].path
-			});
 		}
 	};
 	// 未付费用户点击底部输入框、发送按钮
@@ -265,13 +278,22 @@
 		});
 		uni.showLoading({ mask: true });
 		const membPack = membPackage.value;
+		// #ifdef MP-WEIXIN
+		const source = 'xcx'
+		// #endif
+		
+		// #ifdef H5
+		const source = 'web'
+		// #endif
 		// 创建订单
 		createOrder({
+			source,
 			packageId: membPack.id
 		}).then(order => {
 			// 获取支付参数
 			getPaymtData({id: order.id}).then(res => {
 				// 拉起支付
+				// #ifdef MP-WEIXIN
 				uni.requestPayment({
 					provider: 'wxpay',
 					timeStamp: res.timeStamp,
@@ -298,6 +320,39 @@
 						}
 					}
 				});
+				// #endif
+				
+				// #ifdef H5
+				// 微信浏览器内置对象方法(WeixinJSBridge.invoke & getBrandWCPayRequest)调起微信支付收银台。
+				WeixinJSBridge.invoke('getBrandWCPayRequest', {
+					appId: 'wx62f5435c67d1a41c',
+					timeStamp: res.timeStamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
+					nonceStr: res.nonceStr, // 支付签名随机串，不长于 32 位
+					package: res.packageVal, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=\*\*\*）
+					signType: res.signType, // 微信支付V3的传入RSA,微信支付V2的传入格式与V2统一下单的签名格式保持一致
+					paySign: res.paySign, // 支付签名
+				},
+				function(result) {
+					if (result.err_msg == "get_brand_wcpay_request:ok") {
+						// 支付成功后
+						purchasePopup.value.close();
+						sendable.value = true;
+						// 更新用户信息
+						getUserInfoFn();
+					} else if (result.err_msg == "get_brand_wcpay_request:cancel") {
+						// 取消支付
+						uni.hideLoading();
+					} else {
+						// 支付失败
+						uni.hideLoading();
+						uni.showToast({
+							title: result.err_msg || '支付失败，请稍后重试',
+							mask: true,
+							icon: "none"
+						});
+					}
+				});
+				// #endif
 			}, errMsg => {
 				uni.hideLoading();
 				uni.showToast({
@@ -450,6 +505,7 @@
 			reportKey: msgKey
 		}).then(res => {
 			if (res?.pdfFile) {
+				// #ifdef MP-WEIXIN
 				uni.downloadFile({
 					url: res.pdfFile,
 					success: succ => {
@@ -479,6 +535,11 @@
 						});
 					}
 				});
+				// #endif
+				
+				// #ifdef H5
+				window.open('pdfUrl', '_blank');
+				// #endif
 			} else if (res?.status === 5 || res?.status === 6) {
 				uni.hideLoading();
 				uni.showToast({
@@ -803,7 +864,7 @@
 			}
 			.send {
 				width: 56rpx;
-				height: auto;
+				height: 56rpx;
 				padding: 18rpx 30rpx 18rpx 26rpx;
 			}
 		}

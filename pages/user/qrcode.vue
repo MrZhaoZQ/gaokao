@@ -5,7 +5,10 @@
 			<view class="generate" @click="generateFn"></view>
 		</view>
 		<!-- 微信小程序基础库2.9.0起支持一套新Canvas 2D接口（需指定type属性），同时支持同层渲染 -->
-		<canvas type="2d" id="canvas"></canvas>
+		<canvas type="2d" canvas-id="canvas" id="canvas"></canvas>
+		<!-- #ifdef H5 -->
+		<image v-if="createdImg" class="img" :src="createdImg" mode="aspectFit"></image>
+		<!-- #endif -->
 	</view>
 </template>
 
@@ -26,7 +29,12 @@
 	const drawRemoteImage = (canvas, ctx, imgUrl, x, y, width, height, isCircle = false) => {
 		return new Promise((resolve, reject) => {
 			// 图片对象
+			// #ifdef MP-WEIXIN
 			const image = canvas.createImage();
+			// #endif
+			// #ifdef H5
+			const image = new Image();
+			// #endif
 			// 设置图片src
 			image.src = imgUrl;
 			// 图片加载完成回调
@@ -53,24 +61,49 @@
 	// 画布转图片临时文件（可用image元素在页面预览）
 	const canvasToTempFilePath = (canvas) => {
 		uni.canvasToTempFilePath({
+			// #ifdef MP-WEIXIN
 			canvas,
+			// #endif
+			// #ifdef H5
+			canvasId: 'canvas',
+			// #endif
 			success: (res) => {
+				// console.log(res)
 				uni.hideLoading();
-				createdImg.value = res.tempFilePath;
-				// 将图片临时文件保存到相册
-				save2albumFn();
+				if (res.tempFilePath) {
+					createdImg.value = res.tempFilePath;
+					// 将图片临时文件保存到相册
+					// #ifdef MP-WEIXIN
+					// 小程序内支持直接保存到相册
+					save2albumFn();
+					// #endif
+					
+					// #ifdef H5
+					// 微信公众号H5内可提示长按保存
+					uni.showModal({
+						content: '您的专属二维码已生成\r\n长按保存/分享',
+						showCancel: false,
+						success: () => {}
+					});
+					// #endif
+				} else {
+					uni.showToast({
+						title: '生成图片临时文件失败',
+						icon: 'none'
+					});
+				}
 			},
 			fail: err => {
 				console.error('生成失败:', err);
 				uni.hideLoading();
 				uni.showToast({
-					title: '生成失败',
+					title: err.errMsg || '生成失败',
 					icon: 'none'
 				});
 			}
 		});
 	};
-	// 保存到相册
+	// 保存到相册（H5不支持）
 	const save2albumFn = () => {
 		uni.saveImageToPhotosAlbum({
 			filePath: createdImg.value,
@@ -97,7 +130,7 @@
 			node: true,
 			size: true
 		}).exec(res => {
-			// console.log(res[0].node)
+			// console.log(res[0])
 			if (res && res[0] && res[0].node) {
 				// Canvas 对象
 				const canvas = res[0].node;
@@ -113,7 +146,9 @@
 				// 初始化画布大小
 				canvas.width = width * dpr;
 				canvas.height = height * dpr;
+				// #ifdef MP-WEIXIN
 				ctx.scale(dpr, dpr);
+				// #endif
 				
 				// 2. 绘制背景（网络图片需先下载）
 				drawRemoteImage(canvas, ctx, shareInfo.bgImg, 0, 0, width, height).then(() => {
@@ -139,7 +174,7 @@
 						}, 300);
 					}, () => {
 						uni.showToast({
-							title: errMsg || '生成失败，请稍后重试',
+							title: '生成失败，请稍后重试',
 							mask: true,
 							icon: 'none'
 						});
@@ -167,7 +202,7 @@
 	const getUserInfoFn = () => {
 		getUserInfo().then(res => {
 			// 当前用户的小程序码
-			shareInfo.mpQrCode = res.inviteQrCode
+			shareInfo.mpQrCode = res.inviteQrCode;
 		}, () => {
 			getUserInfoFn();
 		});
@@ -195,6 +230,15 @@
 			left: 0;
 			top: 0;
 			pointer-events: none;
+		}
+		
+		.img {
+			width: 750rpx;
+			height: 1624rpx;
+			position: absolute;
+			left: 0;
+			top: 0;
+			z-index: 66;
 		}
 
 		.main {

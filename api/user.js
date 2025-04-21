@@ -13,6 +13,30 @@ export function wxLogin(data) {
 }
 
 /**
+ * @description 微信公众号H5授权
+ * @param {*} data 
+ */
+export function wxAuth(data) {
+	return request({
+		url: '/wechat/auth',
+		method: 'post',
+		data
+	})
+}
+
+/**
+ * @description 微信公众号H5内config接口注入权限验证
+ * @param {*} data 
+ */
+export function wxConfig(data) {
+	return request({
+		url: '/wechat/js/auth',
+		method: 'post',
+		data
+	})
+}
+
+/**
  * @description 获取用户信息
  * @param {*} data 
  */

@@ -6,9 +6,15 @@
 				欢迎使用AI雷达志愿，请仔细阅读<text @click="toPrivacyPage" class="link">《小程序隐私保护指引》</text>。如您同意，请点击“同意”继续。
 			</view>
 			<view class="btns">
-				<!-- <view class="btn disagree" @click="disagree">不同意</view> -->
+				<!-- #ifdef MP-WEIXIN -->
 				<navigator class="btn exit" open-type="exit" target="miniProgram" hover-class="none">退出</navigator>
 				<button class="btn" open-type="agreePrivacyAuthorization" @click="agree">同意</button>
+				<!-- #endif -->
+				
+				<!-- #ifdef H5 -->
+				<view class="btn disagree" @click="disagree">不同意</view>
+				<view class="btn" @click="agree">同意</view>
+				<!-- #endif -->
 			</view>
 		</view>
 	</uni-popup>

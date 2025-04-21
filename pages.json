@@ -7,6 +7,12 @@
 			}
 		},
 		{
+			"path": "pages/user/auth",
+			"style": {
+				"navigationBarTitleText": "AI雷达志愿"
+			}
+		},
+		{
 			"path": "pages/user/qrcode",
 			"style": {
 				"navigationBarTitleText": "专属二维码"
@@ -75,7 +81,10 @@
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "",
 		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "#F8F8F8"
+		"backgroundColor": "#F8F8F8",
+		"h5": {
+			"navigationStyle": "custom"
+		}
 	},
 	"uniIdRouter": {}
 }
