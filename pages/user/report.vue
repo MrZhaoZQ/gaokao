@@ -123,7 +123,7 @@
 		// #endif
 		
 		// #ifdef H5
-		window.open('pdfUrl', '_blank');
+		window.open(pdfUrl, '_blank');
 		// #endif
 	};
 	// 监听页面加载

@@ -40,7 +40,13 @@
 						<image class="avatar" src="/static/imgs/ai_avatar.png" mode="widthFix"></image>
 						<view class="result">
 							<view class="context" v-if="item.context">
+								<!-- #ifdef MP-WEIXIN -->
 								<rich-text :nodes="item.context"></rich-text>
+								<!-- #endif -->
+								
+								<!-- #ifdef H5 -->
+								<div v-html="item.context"></div>
+								<!-- #endif -->
 							</view>
 							<view v-if="item.output" class="thinking"></view>
 							<view v-else class="wrapper">
@@ -379,6 +385,8 @@
 	const list = ref([]); // 用户与AI的消息列表
 	let current = 0; // 当前正在接收的AI消息在消息列表的索引
 	let tempMsg = ''; // 用于临时存储 AI 返回的数据流
+	let lastUpdateTime = 0;
+	const UPDATE_INTERVAL = 100; // 每100毫秒最多更新一次
 	// 连接 WebSocket
 	const connectWebSocket = () => {
 		// uni-app的socket，分全局socket和socketTask。全局socket只能有一个，一旦被占用就无法再开启。一般使用socketTask。
@@ -414,10 +422,26 @@
 				message = '';
 			} else {
 				tempMsg += message;
-				arr[current].context = tempMsg;
-				uni.pageScrollTo({
-					scrollTop: 999999999
-				});
+				// 每100毫秒最多更新一次
+				const now = Date.now();
+				if (now - lastUpdateTime > UPDATE_INTERVAL) {
+					arr[current].context = tempMsg;
+					// #ifdef MP-WEIXIN
+					uni.pageScrollTo({
+						scrollTop: 999999999,
+						duration: 0 // 禁用动画以获得更平滑的滚动
+					});
+					// #endif
+					
+					// #ifdef H5
+					requestAnimationFrame(() => {
+						uni.pageScrollTo({
+							scrollTop: 999999999,
+							duration: 0 // 禁用动画以获得更平滑的滚动
+						});
+					});
+					// #endif
+				}
 			}
 		});
 		// 监听 WebSocket 错误事件
@@ -538,7 +562,11 @@
 				// #endif
 				
 				// #ifdef H5
-				window.open('pdfUrl', '_blank');
+				uni.hideLoading();
+				// ios中在ajax等请求回调中执行window.open/a标签跳转，被浏览器认为是非用户交互行为而拦截，可通过setTimeout/requestAnimationFrame来解决
+				setTimeout(() => {
+					window.open(res.pdfFile, '_blank');
+				}, 1);
 				// #endif
 			} else if (res?.status === 5 || res?.status === 6) {
 				uni.hideLoading();

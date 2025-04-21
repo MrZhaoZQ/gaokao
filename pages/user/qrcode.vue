@@ -22,7 +22,7 @@
 	const shareInfo = {
 		title: 'AI雷达志愿',
 		mpQrCode: '',
-		bgImg: 'https://xcx.yizhidahui.com/upload/imgs/share.png',
+		bgImg: 'https://h5.yizhidahui.com/static/imgs/share.png',
 		txts: ['1. 数据分析', '2. 快速答疑', '3. 精准建议', '4. 解决报考难题']
 	};
 	// 绘制网络图片（需先下载）
@@ -59,6 +59,7 @@
 		});
 	};
 	// 画布转图片临时文件（可用image元素在页面预览）
+	// 注意：H5内转临时文件时图片有同源策略限制（即画到canvas的图片需要和网页域名一致）
 	const canvasToTempFilePath = (canvas) => {
 		uni.canvasToTempFilePath({
 			// #ifdef MP-WEIXIN
