@@ -13,6 +13,7 @@
 </template>
 
 <script setup>
+	import QRCode from 'qrcode';
 	import { ref } from 'vue';
 	import { onLoad, onShow } from '@dcloudio/uni-app';
 	import { wxLogin, getUserInfo } from '@/api/user.js';
@@ -168,7 +169,7 @@
 					// ctx.fillText(shareInfo.txts[3], 420 * ratio, 1270 * ratio);
 
 					// 5. 绘制二维码（需确保小程序码已生成）
-					drawRemoteImage(canvas, ctx, shareInfo.mpQrCode, 180 * ratio , 866 * ratio, 390 * ratio, 390 * ratio, false).then(() => {
+					drawRemoteImage(canvas, ctx, shareInfo.mpQrCode, 180 * ratio , 856 * ratio, 390 * ratio, 390 * ratio, false).then(() => {
 						// 6. 绘制完成，将 canvas 上的内容生成图片临时文件
 						setTimeout(() => { // 确保渲染完成
 							canvasToTempFilePath(canvas);
@@ -211,7 +212,15 @@
 	// 监听页面加载
 	onLoad((options) => {
 		// console.log('onLoad: ', options);
+		// #ifdef MP-WEIXIN
 		getUserInfoFn();
+		// #endif
+		
+		// #ifdef H5
+		QRCode.toDataURL('https://h5.yizhidahui.com/#/?refId=' + getApp().globalData.userId, (err, url) => {
+			shareInfo.mpQrCode = url;
+		});
+		// #endif
 	});
 	// 监听页面显示
 	onShow(() => {

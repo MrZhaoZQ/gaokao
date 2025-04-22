@@ -9,7 +9,7 @@
 		<!-- 左侧“个人中心”侧滑菜单 -->
 		<uni-drawer ref="menuDrawer" mode="left" :mask-click="true">
 			<scroll-view class="mine-list" style="height: 100%;" scroll-y>
-				<image class="avatar" src="/static/imgs/user.png" mode="aspectFit"></image>
+				<image class="avatar" :src="avatar" mode="aspectFit"></image>
 				<view 
 					v-for="(item, index) in mine"
 					:key="index"
@@ -155,6 +155,7 @@
 		{ 'ico': '../../static/imgs/feat3.png', 'txt': '一键生成', 'sub': '一键生成PDF报告' }
 	]);
 	const checked = ref(false);
+	const avatar = ref('./static/imgs/user.png');
 	// 获取用户信息（发送消息的参数）
 	let userInfo = {};
 	const getUserInfoFn = () => {
@@ -164,6 +165,9 @@
 				openid: res?.openid || '',
 				id: res?.id || ''
 			};
+			// #ifdef H5
+			avatar.value = res?.headerImg || './static/imgs/user.png'
+			// #endif
 			// 根据返回数据展示对应内容，如用户是否已付费可直接使用
 			if (res?.allowSend === 1) {
 				sendable.value = true;
@@ -628,12 +632,19 @@
 	.mine-list {
 		width: 468rpx;
 		box-sizing: border-box;
+		/* #ifdef MP */
 		padding: 100rpx 40rpx;
+		/* #endif */
+		
+		/* #ifdef H5 */
+		padding: 60rpx 40rpx;
+		/* #endif */
 		.avatar {
-			width: 68rpx;
-			height: 68rpx;
+			width: 88rpx;
+			height: 88rpx;
+			margin-bottom: 40rpx;
 			border-radius: 50%;
-			padding: 20rpx 10rpx 68rpx;
+			overflow: hidden;
 		}
 		.mine-item {
 			width: 100%;
@@ -715,7 +726,13 @@
 					background-color: #F5F5F5;
 					box-shadow: 0rpx 2rpx 8rpx 0rpx rgba(0,0,0,0.2);
 					border-radius: 20rpx;
+					/* #ifdef MP */
 					font-size: 32rpx;
+					/* #endif */
+					
+					/* #ifdef H5 */
+					font-size: 30rpx;
+					/* #endif */
 				}
 				.wrapper {
 					width: 100%;
@@ -727,7 +744,13 @@
 					display: flex;
 					justify-content: flex-end;
 					align-items: center;
+					/* #ifdef MP */
 					font-size: 26rpx;
+					/* #endif */
+					
+					/* #ifdef H5 */
+					font-size: 24rpx;
+					/* #endif */
 					font-weight: bolder;
 					color: #e27b26;
 					.uicon {
