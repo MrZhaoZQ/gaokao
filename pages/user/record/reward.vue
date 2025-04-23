@@ -71,6 +71,10 @@
 				const arr = res.records || [];
 				for (const i in arr) {
 					arr[i].time = arr[i].createTime ? new Date(arr[i].createTime).toLocaleString('zh-CN', { hour12: false }) : '';
+					// #ifdef H5
+					arr[i].headerImg = arr[i].user?.headerImg || '';
+					// #endif
+					arr[i].nickName = arr[i].user?.nickName || '';
 					list.value.push(arr[i]);
 				}
 				if (arr.length < pageSize) {
