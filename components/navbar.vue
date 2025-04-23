@@ -6,7 +6,7 @@
 			mode="aspectFit"
 			@click="clickMenuFn"
 		></image>
-		<view class="title">AI雷达志愿</view>
+		<view class="title">AI智选志愿</view>
 		<view class="placeholder"></view>
 	</view>
 </template>

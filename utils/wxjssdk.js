@@ -30,7 +30,7 @@ export function initWxJsSDK() {
 		// console.log('wx config success')
 		// 配置分享内容
 		const shareData = {
-			title: 'AI雷达志愿', // 分享标题
+			title: 'AI智选志愿', // 分享标题
 			desc: '择校启航，决胜未来！精准报考，梦想扬帆！', // 分享描述
 			link: 'https://h5.yizhidahui.com/#/?refId=' + getApp().globalData.userId, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
 			imgUrl: 'https://h5.yizhidahui.com/static/imgs/logo.png', // 分享图标

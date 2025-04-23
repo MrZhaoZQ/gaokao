@@ -9,7 +9,12 @@
 		<!-- 左侧“个人中心”侧滑菜单 -->
 		<uni-drawer ref="menuDrawer" mode="left" :mask-click="true">
 			<scroll-view class="mine-list" style="height: 100%;" scroll-y>
-				<image class="avatar" :src="avatar" mode="aspectFit"></image>
+				<view class="user-info">
+					<image class="avatar" :src="avatar" mode="aspectFit"></image>
+					<!-- #ifdef H5 -->
+					<view v-if="nickname" class="nickname">{{nickname}}</view>
+					<!-- #endif -->
+				</view>
 				<view 
 					v-for="(item, index) in mine"
 					:key="index"
@@ -26,7 +31,7 @@
 		<view v-if="!sent" class="welcome">
 			<view class="content">
 				<image class="logo" src="/static/imgs/logo.png" mode="widthFix"></image>
-				<text class="subtitle">嗨! 我是 AI雷达志愿 ~</text>
+				<text class="subtitle">嗨! 我是 AI智选志愿 ~</text>
 				<view class="introduction">我可以帮你报考分析、答疑、建议, 请把你的任务交给我吧 ~</view>
 			</view>
 		</view>
@@ -94,7 +99,7 @@
 				<view class="buy" @click="buyFn">确认协议并支付</view>
 				<view class="checkbox">
 					<radio :checked="checked" color="#0076FF" style="transform: scale(0.7)" @click="checkedFn" />
-					<view>我已阅读并同意 <text class="protocol" @click="toProtocolFn">Ai雷达志愿会员服务协议</text> </view>
+					<view>我已阅读并同意 <text class="protocol" @click="toProtocolFn">AI智选志愿会员服务协议</text> </view>
 				</view>
 			</view>
 		</uni-popup>
@@ -109,7 +114,7 @@
 					:disabled="!sendable"
 					auto-height
 					disable-default-padding
-					placeholder="给AI雷达志愿发送消息"
+					placeholder="给AI智选志愿发送消息"
 				></textarea>
 				<image
 					class="send"
@@ -156,6 +161,9 @@
 	]);
 	const checked = ref(false);
 	const avatar = ref('./static/imgs/user.png');
+	// #ifdef H5
+	const nickname = ref('');
+	// #endif
 	// 获取用户信息（发送消息的参数）
 	let userInfo = {};
 	const getUserInfoFn = () => {
@@ -166,7 +174,8 @@
 				id: res?.id || ''
 			};
 			// #ifdef H5
-			avatar.value = res?.headerImg || './static/imgs/user.png'
+			avatar.value = res?.headerImg || './static/imgs/user.png';
+			nickname.value = res?.nickName || '';
 			// #endif
 			// 根据返回数据展示对应内容，如用户是否已付费可直接使用
 			if (res?.allowSend === 1) {
@@ -416,10 +425,11 @@
 			const arr = list.value;
 			let message = res.data;
 			// console.log('收到消息: ', message);
-			if (message == '<message>' || message == '<noreport>') { // 开头
+			if (message == '<message>') { // 开头
 				tempMsg = '';
-			} else if (message == '</message>' || message == '</noreport>') {// 结尾
-				arr[current].hasReport = message == '</noreport>' ? false : true;
+			} else if (message == '<noreport></noreport>') {// 表识是否有报告
+				arr[current].hasReport = false;
+			} else if (message == '</message>') {// 结尾
 				arr[current].output = false;
 				thinking.value = false;
 			} else if (message == '```' || message == 'html' || message == '###') { // 过滤特殊字符
@@ -629,22 +639,36 @@
 		padding-bottom: 220rpx; // to handle fixed footer
 	}
 	
+	::v-deep .uni-drawer__content--visible {
+		width: 468rpx !important;
+	}
+	
 	.mine-list {
 		width: 468rpx;
 		box-sizing: border-box;
 		/* #ifdef MP */
-		padding: 100rpx 40rpx;
+		padding: 100rpx 30rpx 100rpx 60;
 		/* #endif */
 		
 		/* #ifdef H5 */
-		padding: 60rpx 40rpx;
+		padding: 60rpx 30rpx 60rpx 60rpx;
 		/* #endif */
-		.avatar {
-			width: 88rpx;
-			height: 88rpx;
+		.user-info {
 			margin-bottom: 40rpx;
-			border-radius: 50%;
-			overflow: hidden;
+			.avatar {
+				width: 88rpx;
+				height: 88rpx;
+				border-radius: 50%;
+				overflow: hidden;
+			}
+			/* #ifdef H5 */
+			.nickname {
+				padding-top: 10rpx;
+				font-size: 30rpx;
+				font-weight: bolder;
+				line-height: 42rpx;
+			}
+			/* #endif */
 		}
 		.mine-item {
 			width: 100%;

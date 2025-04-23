@@ -21,7 +21,7 @@
 	const createdImg = ref('')
 	// 分享图片的数据
 	const shareInfo = {
-		title: 'AI雷达志愿',
+		title: 'AI智选志愿',
 		mpQrCode: '',
 		bgImg: 'https://h5.yizhidahui.com/static/imgs/share.png',
 		txts: ['1. 数据分析', '2. 快速答疑', '3. 精准建议', '4. 解决报考难题']

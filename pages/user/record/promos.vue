@@ -7,11 +7,11 @@
 				class="item"
 			>
 				<!-- #ifdef MP-WEIXIN -->
-				<image class="avatar" src="/static/imgs/user.png" mode="widthFix"></image>
+				<image class="avatar" src="/static/imgs/user.png" mode="aspectFit"></image>
 				<!-- #endif -->
 				
 				<!-- #ifdef H5 -->
-				<image class="avatar" :src="item.headerImg || './static/imgs/user.png'" mode="widthFix"></image>
+				<image class="avatar" :src="item.headerImg || './static/imgs/user.png'" mode="aspectFit"></image>
 				<!-- #endif -->
 				<view class="info">
 					<view>{{item.nickName || '微信用户'}}</view>
@@ -126,7 +126,8 @@
 			align-items: center;
 			.avatar {
 				width: 92rpx;
-				height: auto;
+				height: 92rpx;
+				border-radius: 46rpx;
 			}
 			.info {
 				flex: 1;

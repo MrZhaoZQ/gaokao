@@ -3,7 +3,7 @@
 		<view class="privacy">
 			<text class="title">用户隐私保护说明</text>
 			<view class="context">
-				欢迎使用AI雷达志愿，请仔细阅读<text @click="toPrivacyPage" class="link">《小程序隐私保护指引》</text>。如您同意，请点击“同意”继续。
+				欢迎使用AI智选志愿，请仔细阅读<text @click="toPrivacyPage" class="link">《小程序隐私保护指引》</text>。如您同意，请点击“同意”继续。
 			</view>
 			<view class="btns">
 				<!-- #ifdef MP-WEIXIN -->

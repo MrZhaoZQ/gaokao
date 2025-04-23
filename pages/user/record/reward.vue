@@ -12,18 +12,18 @@
 				class="item"
 			>
 				<!-- #ifdef MP-WEIXIN -->
-				<image class="avatar" src="/static/imgs/user.png" mode="widthFix"></image>
+				<image class="avatar" src="/static/imgs/user.png" mode="aspectFit"></image>
 				<!-- #endif -->
 				
 				<!-- #ifdef H5 -->
-				<image class="avatar" :src="item.headerImg || './static/imgs/user.png'" mode="widthFix"></image>
+				<image class="avatar" :src="item.headerImg || './static/imgs/user.png'" mode="aspectFit"></image>
 				<!-- #endif -->
 				<view class="info">
 					<view>{{item.nickName || '微信用户'}}</view>
 					<view class="time">注册时间：{{item.time}}</view>
 				</view>
 				<view class="reward">
-					<view class="amount">+<text class="num">{{item.money}}</text>元</view>
+					<view class="amount">{{item.money > 0 ? '+' : ''}}<text class="num">{{item.money}}</text>元</view>
 					<view class="type">红包奖励</view>
 				</view>
 			</view>
@@ -186,7 +186,8 @@
 			align-items: center;
 			.avatar {
 				width: 92rpx;
-				height: auto;
+				height: 92rpx;
+				border-radius: 46rpx;
 			}
 			.info {
 				flex: 1;
