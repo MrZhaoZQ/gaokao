@@ -1,7 +1,7 @@
 <template>
 	<view class="container">
 		<view class="main">
-			<image class="bg" src="https://xcx.yizhidahui.com/upload/imgs/promo.jpg" mode="widthFix"></image>
+			<image class="bg" src="https://h5.yizhidahui.com/static/imgs/promo.png" mode="widthFix"></image>
 			<view class="generate" @click="generateFn"></view>
 		</view>
 		<!-- 微信小程序基础库2.9.0起支持一套新Canvas 2D接口（需指定type属性），同时支持同层渲染 -->
@@ -169,7 +169,7 @@
 					// ctx.fillText(shareInfo.txts[3], 420 * ratio, 1270 * ratio);
 
 					// 5. 绘制二维码（需确保小程序码已生成）
-					drawRemoteImage(canvas, ctx, shareInfo.mpQrCode, 180 * ratio , 856 * ratio, 390 * ratio, 390 * ratio, false).then(() => {
+					drawRemoteImage(canvas, ctx, shareInfo.mpQrCode, 180 * ratio , 780 * ratio, 386 * ratio, 386 * ratio, false).then(() => {
 						// 6. 绘制完成，将 canvas 上的内容生成图片临时文件
 						setTimeout(() => { // 确保渲染完成
 							canvasToTempFilePath(canvas);
@@ -235,7 +235,7 @@
 
 		#canvas {
 			width: 750rpx;
-			height: 1624rpx;
+			height: 1334rpx;
 			position: absolute;
 			left: 0;
 			top: 0;
@@ -244,7 +244,7 @@
 		
 		.img {
 			width: 750rpx;
-			height: 1624rpx;
+			height: 1334rpx;
 			position: absolute;
 			left: 0;
 			top: 0;
@@ -253,24 +253,24 @@
 
 		.main {
 			width: 750rpx;
-			height: 1624rpx;
-			background-color: #ff9744;
+			height: 1334rpx;
+			background-color: #30d4fa;
 			position: relative;
 			left: 0;
 			top: 0;
 
 			.bg {
 				width: 750rpx;
-				height: 1624rpx;
+				height: 1334rpx;
 				display: block;
 			}
 
 			.generate {
-				width: 598rpx;
-				height: 136rpx;
+				width: 626rpx;
+				height: 146rpx;
 				position: absolute;
-				left: 76rpx;
-				bottom: 280rpx;
+				left: 62rpx;
+				top: 1128rpx;
 			}
 		}
 	}
