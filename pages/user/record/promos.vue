@@ -19,7 +19,7 @@
 				</view>
 				<image
 					class="status"
-					:src="item.status ? '/static/imgs/paid.png' : '/static/imgs/unpaid.png'"
+					:src="item.isPay ? '/static/imgs/paid.png' : '/static/imgs/unpaid.png'"
 					mode="widthFix"
 				></image>
 			</view>

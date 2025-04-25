@@ -53,6 +53,7 @@
 		requesting = true;
 		uni.showLoading({ mask: true });
 		getRewardRecords({
+			isBonus: 1, // 筛选奖励记录
 			page: refreshing ? 1 : pageNum,
 			pageSize,
 		}).then(res => {

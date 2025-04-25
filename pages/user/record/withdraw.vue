@@ -47,21 +47,7 @@
 	import { getWithdrawRecords } from '@/api/order.js';
 	const visible = ref(true);
 	const total = ref(0);
-	const list = ref([{
-		cashType: 0,
-		time: '2025-03-20 20:00:00',
-		transactionId: '20250320200000',
-		code: '20250320200000',
-		cashMoney: 30,
-		status: 1
-	}, {
-		cashType: 1,
-		time: '2025-03-20 20:00:00',
-		transactionId: '20250320200001',
-		code: '20250320200001',
-		cashMoney: 20,
-		status: 0
-	}]);
+	const list = ref([]);
 	const more = ref(true);
 	let pageNum = 1, pageSize = 10, requesting = false;
 	// 获取列表数据
