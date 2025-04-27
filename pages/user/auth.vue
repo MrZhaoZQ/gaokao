@@ -5,12 +5,13 @@
 <script setup>
 	import { onLoad, onShow } from '@dcloudio/uni-app';
 	import { wxAuth } from '@/api/user.js';
-	let code = '';
+	let code = '', refId = '';
 	// 监听页面加载
 	onLoad((options) => {
 		// console.log('onLoad: ', options);
 		if (options?.code) {
 			code = options.code;
+			refId = options.state || '';
 			wxAuth(options).then(res => {
 				uni.setStorage({
 					key: 'token',
@@ -28,6 +29,12 @@
 					mask: true,
 					icon: "none"
 				});
+				setTimeout(() => {
+					// 重定向到首页
+					uni.reLaunch({
+						url: '/pages/index/index?refId=' + refId
+					});
+				}, 1800);
 			});
 		} else {
 			// 重新发起授权
