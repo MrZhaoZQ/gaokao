@@ -1,7 +1,7 @@
 import wxjs from 'weixin-js-sdk'
+import { wxConfig } from '@/api/user.js'
 
 // 判断当前H5是否在微信内打开
-import { wxConfig } from '@/api/user.js'
 const isWechat = /micromessenger/i.test(navigator.userAgent)
 
 export function initWxJsSDK() {
